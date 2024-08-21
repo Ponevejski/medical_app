@@ -21,7 +21,7 @@ This is a React Native application for managing medical data, including medicati
 
    ```bash
    git clone <repository-url>
-   cd medical_client
+   cd client
    ```
 
 2. Install dependencies

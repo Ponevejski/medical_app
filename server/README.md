@@ -22,7 +22,7 @@ This is an Express JS application for managing medical data, including medicatio
 
    ```bash
    git clone <repository-url>
-   cd medical_client
+   cd server
 
    ```
 
