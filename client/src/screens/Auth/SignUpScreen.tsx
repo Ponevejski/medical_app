@@ -14,7 +14,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import Button from '../../components/Button';
 import COLORS from '../../constants/colors';
 import {RootStackParamList} from '../../interfaces';
-import {useSignUpMutation} from '../../services/mutations'; // Adjust the import to your service
+import {useSignUpMutation} from '../../services/mutations';
 
 type FormData = {
   name: string;
@@ -25,8 +25,7 @@ type FormData = {
 const SignUpScreen = ({
   navigation,
 }: NativeStackScreenProps<RootStackParamList>) => {
-  const mutation = useSignUpMutation(); // Use your sign-up mutation hook
-
+  const mutation = useSignUpMutation();
   const {
     control,
     handleSubmit,
@@ -37,7 +36,7 @@ const SignUpScreen = ({
     try {
       await mutation.mutateAsync(data);
       // Optionally navigate to the Login screen or Dashboard after successful sign-up
-      navigation.navigate('Login'); // Adjust as necessary
+      navigation.navigate('Login');
     } catch (error) {
       console.log(error);
     }

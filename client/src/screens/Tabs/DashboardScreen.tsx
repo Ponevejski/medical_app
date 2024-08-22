@@ -1,6 +1,6 @@
 import {faAdd} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React from 'react';
 import {
@@ -42,7 +42,7 @@ const DashboardScreen = ({
         <FlatList
           data={medicationList(medications)}
           renderItem={({item}) => <MedicationItem item={item} />}
-          keyExtractor={item => item.id.toString()} // Adjust based on your item structure
+          keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.listContainer}
         />
       ) : (

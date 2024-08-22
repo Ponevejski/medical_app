@@ -11,10 +11,10 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Button from '../../components/Button'; // Ensure you have a Button component
-import COLORS from '../../constants/colors'; // Adjust the import based on your color constants
-import {RootStackParamList} from '../../interfaces'; // Adjust the import based on your interfaces
-import {useAddMedicationMutation} from '../../services/mutations'; // Adjust the import based on your service
+import Button from '../../components/Button';
+import COLORS from '../../constants/colors';
+import {RootStackParamList} from '../../interfaces';
+import {useAddMedicationMutation} from '../../services/mutations';
 
 type FormData = {
   name: string;
@@ -26,7 +26,7 @@ type FormData = {
 const AddMedicationScreen = ({
   navigation,
 }: NativeStackScreenProps<RootStackParamList>) => {
-  const mutation = useAddMedicationMutation(); // Use your add medication mutation hook
+  const mutation = useAddMedicationMutation();
 
   const {
     control,
@@ -37,8 +37,8 @@ const AddMedicationScreen = ({
   const onSubmit = async (data: FormData) => {
     try {
       await mutation.mutateAsync(data);
-      // Optionally navigate back to the dashboard or another screen after successful addition
-      navigation.navigate('Dashboard'); // Adjust as necessary
+
+      navigation.navigate('Dashboard');
     } catch (error) {
       console.log(error);
     }
@@ -128,7 +128,7 @@ const AddMedicationScreen = ({
           <Button
             onPress={handleSubmit(onSubmit)}
             title="Add Medication"
-            isLoading={mutation.isPending} // Adjust based on your mutation state
+            isLoading={mutation.isPending}
           />
         </View>
       </KeyboardAvoidingView>

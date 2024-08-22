@@ -78,14 +78,12 @@ export const loginUser = async (req, res) => {
 			{ expiresIn: '7d' }
 		); // Expires in 7 days
 
-		// You may want to store the refresh token in your database for future validation
-
 		// Send tokens back to the client
 		res.json({
 			message: 'Login successful',
 			sessionToken,
 			refreshToken,
-			user: user.rows[0], // Optionally return user data
+			user: user.rows[0],
 		});
 	} catch (error) {
 		console.error(error);
