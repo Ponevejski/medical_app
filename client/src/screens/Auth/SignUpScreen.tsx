@@ -26,6 +26,7 @@ const SignUpScreen = ({
   navigation,
 }: NativeStackScreenProps<RootStackParamList>) => {
   const mutation = useSignUpMutation();
+
   const {
     control,
     handleSubmit,
@@ -35,7 +36,7 @@ const SignUpScreen = ({
   const onSubmit = async (data: FormData) => {
     try {
       await mutation.mutateAsync(data);
-      // Optionally navigate to the Login screen or Dashboard after successful sign-up
+
       navigation.navigate('Login');
     } catch (error) {
       console.log(error);

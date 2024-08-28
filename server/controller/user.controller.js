@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 import db from '../db.js';
+import { createUserQuery, getUserQuery, loginUserQuery } from '../queries.js';
 
 const JWT_SECRET = process.env.JWT_SECRET; // Replace with your own secret
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_SECRET; // Replace with your own refresh token secret
@@ -20,11 +21,7 @@ export const createUser = async (req, res) => {
 		const hashedPassword = await bcrypt.hash(password, saltRounds);
 
 		const user = await db.query(
-			`
-          INSERT INTO "users" (name, email, password)
-          VALUES ($1, $2, $3)
-          RETURNING *;
-          `,
+			createUserQuery,
 			[name, email, hashedPassword] // Use the hashed password
 		);
 
@@ -47,12 +44,7 @@ export const loginUser = async (req, res) => {
 	const { email, password } = req.body;
 
 	try {
-		const user = await db.query(
-			`
-          SELECT * FROM "users" WHERE email = $1;
-          `,
-			[email]
-		);
+		const user = await db.query(loginUserQuery, [email]);
 
 		if (user.rows.length === 0) {
 			return res.status(401).json({ message: 'User does not exist.' });
@@ -78,12 +70,14 @@ export const loginUser = async (req, res) => {
 			{ expiresIn: '7d' }
 		); // Expires in 7 days
 
+		// You may want to store the refresh token in your database for future validation
+
 		// Send tokens back to the client
 		res.json({
 			message: 'Login successful',
 			sessionToken,
 			refreshToken,
-			user: user.rows[0],
+			user: user.rows[0], // Optionally return user data
 		});
 	} catch (error) {
 		console.error(error);
@@ -93,7 +87,7 @@ export const loginUser = async (req, res) => {
 
 export const getUser = async (req, res) => {
 	const { id } = req.user;
-	const user = await db.query(`SELECT * FROM "users" WHERE id = $1`, [id]);
+	const user = await db.query(getUserQuery, [id]);
 	res.json(user.rows[0]);
 };
 

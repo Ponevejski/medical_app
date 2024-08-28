@@ -1,4 +1,4 @@
-import {faEdit, faPen, faRemove} from '@fortawesome/free-solid-svg-icons';
+import {faPen, faRemove} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';

@@ -1,4 +1,13 @@
 import db from '../db.js';
+import {
+	createMedicationQuery,
+	currentMedicationQuery,
+	deleteMedicationQuery,
+	getMedicationQuery,
+	getUserMedicationsQuery,
+	updateMedicationCountQuery,
+	updateMedicationQuery,
+} from '../queries.js';
 
 export const createMedication = async (req, res) => {
 	const { name, description, count = 0, destination_count = 0 } = req.body;
@@ -23,14 +32,13 @@ export const createMedication = async (req, res) => {
 	}
 
 	try {
-		const medication = await db.query(
-			`
-      INSERT INTO "medications" (name, description, count, destination_count, user_id)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING *;
-      `,
-			[name, description, count, destination_count, id]
-		);
+		const medication = await db.query(createMedicationQuery, [
+			name,
+			description,
+			count,
+			destination_count,
+			id,
+		]);
 		res.status(201).json(medication.rows[0]);
 	} catch (error) {
 		console.error(error);
@@ -42,13 +50,7 @@ export const createMedication = async (req, res) => {
 
 export const getUserMedications = async (req, res) => {
 	try {
-		const medications = await db.query(
-			`
-        SELECT * FROM "medications"
-        WHERE user_id = $1
-        `,
-			[req.user.id]
-		);
+		const medications = await db.query(getUserMedicationsQuery, [req.user.id]);
 
 		if (medications.rows.length === 0) {
 			return res
@@ -97,15 +99,14 @@ export const updateMedication = async (req, res) => {
 	}
 
 	try {
-		const medication = await db.query(
-			`
-      UPDATE "medications"
-      SET name = $1, description = $2, count = $3, destination_count = $4
-      WHERE id = $5 AND user_id = $6
-      RETURNING *;
-      `,
-			[name, description, count, destination_count, id, userId]
-		);
+		const medication = await db.query(updateMedicationQuery, [
+			name,
+			description,
+			count,
+			destination_count,
+			id,
+			userId,
+		]);
 
 		if (medication.rows.length === 0) {
 			return res
@@ -129,10 +130,10 @@ export const updateMedicationCount = async (req, res) => {
 
 	try {
 		// Fetch the current medication details
-		const currentMedication = await db.query(
-			`SELECT * FROM "medications" WHERE id = $1 AND user_id = $2`,
-			[id, userId]
-		);
+		const currentMedication = await db.query(currentMedicationQuery, [
+			id,
+			userId,
+		]);
 
 		if (currentMedication.rows.length === 0) {
 			return res
@@ -157,24 +158,19 @@ export const updateMedicationCount = async (req, res) => {
 		}
 
 		// Update the count and/or destination_count
-		const updatedMedication = await db.query(
-			`
-							UPDATE "medications"
-							SET count = COALESCE($1, count), destination_count = COALESCE($2, destination_count)
-							WHERE id = $3 AND user_id = $4
-							RETURNING *;
-					`,
-			[count, destination_count, id, userId]
-		);
+		const updatedMedication = await db.query(updateMedicationCountQuery, [
+			count,
+			destination_count,
+			id,
+			userId,
+		]);
 
 		res.status(200).json(updatedMedication.rows[0]);
 	} catch (error) {
 		console.error(error);
-		res
-			.status(500)
-			.json({
-				message: 'An error occurred while updating the medication count.',
-			});
+		res.status(500).json({
+			message: 'An error occurred while updating the medication count.',
+		});
 	}
 };
 
@@ -188,13 +184,7 @@ export const deleteMedication = async (req, res) => {
 
 	try {
 		// First, check if the medication exists
-		const medication = await db.query(
-			`
-          SELECT * FROM "medications"
-          WHERE id = $1
-          `,
-			[id]
-		);
+		const medication = await db.query(getMedicationQuery, [id]);
 
 		// If the medication does not exist, return a 404 response
 		if (medication.rows.length === 0) {
@@ -202,13 +192,7 @@ export const deleteMedication = async (req, res) => {
 		}
 
 		// If it exists, proceed to delete it
-		await db.query(
-			`
-          DELETE FROM "medications"
-          WHERE id = $1
-          `,
-			[id]
-		);
+		await db.query(deleteMedicationQuery, [id]);
 
 		// Return a success response
 		res.status(200).json({ message: 'Medication deleted successfully.' });
@@ -228,13 +212,7 @@ export const getMedication = async (req, res) => {
 	}
 
 	try {
-		const medication = await db.query(
-			`
-          SELECT * FROM "medications"
-          WHERE id = $1
-          `,
-			[id]
-		);
+		const medication = await db.query(getMedicationQuery, [id]);
 
 		if (medication.rows.length === 0) {
 			return res.status(404).json({ message: 'Medication not found.' });

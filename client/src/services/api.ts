@@ -1,9 +1,12 @@
+import {API_ANDROID, API_IOS} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Config from 'react-native-config';
+import {Platform} from 'react-native';
+
+const API = Platform.select({ios: API_IOS, android: API_ANDROID});
 
 const api = axios.create({
-  baseURL: Config.API,
+  baseURL: API,
 });
 
 api.interceptors.response.use(
